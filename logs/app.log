@@ -1,0 +1,5 @@
+[2025-05-17 14:18:44] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-17 14:18:48] [::1] [Gizem Merve Demir] MATCH DUPLICATE: User #2 tried to request again for item #1
+[2025-05-17 14:25:46] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-17 14:28:35] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
+[2025-05-17 14:28:38] [::1] [Admin] ADMIN DELETE ITEM: Item #2 deleted
