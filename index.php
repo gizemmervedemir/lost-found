@@ -6,6 +6,7 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 
+// ✅ SADECE onaylanmamış eşya kayıtlarını getir:
 $items = $conn->query("
     SELECT * FROM items
     WHERE id NOT IN (
@@ -18,11 +19,10 @@ $items = $conn->query("
 
 <?php include 'includes/header.php'; ?>
 
+<!-- 💡 Hoş Geldin Kartı -->
 <div class="card mb-4 border-0 shadow-sm rounded-4" style="background: linear-gradient(90deg, #e0f3ff, #f9fcff);">
     <div class="card-body d-flex align-items-center">
-        <div class="me-4 text-primary fs-1">
-            <i class="bi bi-search"></i>
-        </div>
+        <div class="me-4 text-primary fs-1"><i class="bi bi-search"></i></div>
         <div>
             <h4 class="card-title mb-1">Welcome to Lost & Found</h4>
             <p class="card-text mb-0 text-muted">
@@ -33,8 +33,9 @@ $items = $conn->query("
     </div>
 </div>
 
+<!-- Sayfa 2 Sütuna Bölünüyor -->
 <div class="row">
-
+    <!-- 🔹 Sol: Eşya Kartları -->
     <div class="col-md-8">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">Lost Items</h2>
@@ -49,7 +50,7 @@ $items = $conn->query("
             <div class="row" id="item-list">
                 <?php while ($item = $items->fetch_assoc()): ?>
                     <div class="col-md-6 mb-4">
-                        <div class="card h-100" style="min-height: 450px;">
+                        <div class="card h-100" style="min-height: 460px;">
                             <?php if (!empty($item['image_path']) && file_exists($item['image_path'])): ?>
                                 <img src="<?= $item['image_path'] ?>" class="card-img-top" style="height: 280px; object-fit: cover; border-bottom: 1px solid #ddd;">
                             <?php endif; ?>
@@ -67,16 +68,17 @@ $items = $conn->query("
         </div>
     </div>
 
-
+    <!-- 🔸 Sağ Panel: Bilgi Kartları -->
     <div class="col-md-4">
-        <div class="card mb-4 border-info">
+        <!-- Did You Know -->
+        <div class="card mb-4 border-info shadow-sm">
             <div class="card-header bg-info text-white">
                 <strong>Did You Know?</strong>
             </div>
             <div class="card-body small">
                 <ul class="list-unstyled mb-0">
                     <li>🌍 <strong>2+ billion</strong> items lost globally each year.</li>
-                    <li>🔍 Only <strong>20%</strong> of lost items are recovered.</li>
+                    <li>🔍 Only <strong>20%</strong> are recovered.</li>
                     <li>📱 Most lost: phones, wallets, keys.</li>
                     <li>⏱ Avg. time to recovery: <strong>3.5 days</strong>.</li>
                     <li>✈️ Airports find <strong>1.2M+</strong> items annually.</li>
@@ -84,7 +86,8 @@ $items = $conn->query("
             </div>
         </div>
 
-        <div class="card mt-3 border-secondary">
+        <!-- Quick Tips -->
+        <div class="card mb-3 border-secondary shadow-sm">
             <div class="card-header bg-secondary text-white">
                 💡 Quick Tips
             </div>
@@ -94,19 +97,35 @@ $items = $conn->query("
                     <li>🕓 Include the exact date lost.</li>
                     <li>🧭 Mention location clearly.</li>
                     <li>📦 Use clear titles like "Black Backpack".</li>
+                    <li>🔁 Update status when item is found.</li>
                 </ul>
             </div>
         </div>
 
-        <div class="card mt-3 border-success">
+        <!-- Success Stories -->
+        <div class="card mb-3 border-success shadow-sm">
             <div class="card-body text-success small">
-                ✅ <strong>Sena</strong> recovered her lost keys in 2 days using this system.
+                ✅ <strong>Sena</strong> recovered her lost keys in 2 days using this platform.
+            </div>
+        </div>
+
+        <!-- Contact or Support (Yeni Kart) -->
+        <div class="card border-warning shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                📬 Need Help?
+            </div>
+            <div class="card-body small">
+                <p>If you need assistance, contact our support:</p>
+                <ul class="mb-0">
+                    <li>📧 support@lostfound.com</li>
+                    <li>📞 +1 555-LOST-NOW</li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 
-
+<!-- 🔁 Arama + Eşleşme -->
 <script>
 document.getElementById("searchBox").addEventListener("input", function () {
     let query = this.value;
@@ -124,7 +143,7 @@ document.getElementById("searchBox").addEventListener("input", function () {
             data.forEach(item => {
                 html += `
                 <div class="col-md-6 mb-4">
-                    <div class="card h-100" style="min-height: 450px;">
+                    <div class="card h-100" style="min-height: 460px;">
                         ${item.image_path ? `<img src="${item.image_path}" class="card-img-top" style="height: 280px; object-fit: cover; border-bottom: 1px solid #ddd;">` : ''}
                         <div class="card-body">
                             <h5 class="card-title">${item.title}</h5>

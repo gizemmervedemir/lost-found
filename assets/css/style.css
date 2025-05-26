@@ -1,0 +1,48 @@
+body {
+    background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #fff !important;
+}
+
+.nav-link {
+    color: #f1f1f1 !important;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.navbar-text {
+    color: #f8f9fa;
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.btn-outline-light:hover {
+    background-color: #ffffff20;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+}
+
+.container-fluid {
+    padding-top: 20px;
+    padding-bottom: 40px;
+}

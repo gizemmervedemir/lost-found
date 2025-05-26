@@ -12,25 +12,65 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Custom Styles -->
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
         }
-        .navbar-brand i {
-            margin-right: 6px;
+        .navbar {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .card-body {
-            padding: 1.25rem;
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #fff !important;
+        }
+        .nav-link {
+            color: #f1f1f1 !important;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .navbar-text {
+            color: #f8f9fa;
+        }
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+        .btn-outline-light:hover {
+            background-color: #ffffff20;
+        }
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.4em 0.6em;
+        }
+        .container-fluid {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .avatar-header {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid px-4">
         <a class="navbar-brand d-flex align-items-center" href="index.php">
-            <i class="bi bi-box-seam"></i> Lost & Found
+            <i class="bi bi-compass me-2"></i> Lost & Found
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
             <span class="navbar-toggler-icon"></span>
@@ -39,31 +79,136 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         <div class="collapse navbar-collapse" id="navbarMenu">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="index.php"><i class="bi bi-house-door"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="add_item.php"><i class="bi bi-plus-square"></i> Add Item</a></li>
-                    <li class="nav-item"><a class="nav-link" href="match_status.php"><i class="bi bi-link-45deg"></i> My Matches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="my_items.php"><i class="bi bi-collection"></i> My Items</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+
+                    <?php if ($_SESSION['role'] !== 'admin'): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="add_item.php">
+                                <i class="bi bi-plus-square"></i> Add Item
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="match_status.php">
+                                <i class="bi bi-link-45deg"></i> My Matches
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my_items.php">
+                                <i class="bi bi-collection"></i> My Items
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.php">
+                                <i class="bi bi-person-lines-fill"></i> My Profile
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <li class="nav-item"><a class="nav-link" href="admin_panel.php"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
-                        <li class="nav-item"><a class="nav-link" href="view_logs.php"><i class="bi bi-file-earmark-text"></i> View Logs</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin_panel.php">
+                                <i class="bi bi-shield-lock"></i> Admin Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view_logs.php">
+                                <i class="bi bi-file-earmark-text"></i> Logs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view_reports.php">
+                                <i class="bi bi-flag"></i> Reports
+                            </a>
+                        </li>
                     <?php endif; ?>
                 </ul>
-                <span class="navbar-text text-white me-3 d-flex align-items-center">
-                    <i class="bi bi-person-circle me-1"></i> <?= htmlspecialchars($_SESSION['user_name']) ?>
+
+                <!-- 🔔 Notifications -->
+                <ul class="navbar-nav me-3">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#" id="notifDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-bell"></i>
+                            <span id="notifCount"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                              0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown" id="notifList">
+                            <li class="dropdown-header">Notifications</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="text-muted px-3">No new notifications</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- 👤 User Info & Avatar -->
+                <?php
+                // pick session avatar or fallback
+                $avatar_path = (isset($_SESSION['user_avatar']) && file_exists($_SESSION['user_avatar']))
+                    ? $_SESSION['user_avatar']
+                    : 'assets/default_avatar.png';
+                ?>
+                <span class="navbar-text d-flex align-items-center me-3">
+                    <img src="<?= htmlspecialchars($avatar_path) ?>"
+                         alt="Avatar"
+                         class="avatar-header">
+                    <?= htmlspecialchars($_SESSION['user_name']) ?>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <span class="badge bg-warning text-dark ms-2">Admin</span>
                     <?php endif; ?>
                 </span>
-                <a href="logout.php" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+                <a href="logout.php" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
             <?php else: ?>
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="register.php"><i class="bi bi-person-plus"></i> Register</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.php">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </li>
                 </ul>
             <?php endif; ?>
         </div>
     </div>
 </nav>
 
-
+<!-- Page Content Starts -->
 <div class="container-fluid px-4">
+
+<?php if (isset($_SESSION['user_id'])): ?>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('notifications.php')
+            .then(res => res.json())
+            .then(data => {
+                const notifList  = document.getElementById('notifList'),
+                      notifCount = document.getElementById('notifCount');
+                if (data.status === "success" && data.count > 0) {
+                    notifCount.classList.remove("d-none");
+                    notifCount.textContent = data.count;
+                    notifList.innerHTML = '<li class="dropdown-header">Notifications</li><li><hr class="dropdown-divider"></li>';
+                    data.notifications.forEach(n => {
+                        notifList.innerHTML += `
+                          <li>
+                            <span class="dropdown-item small">
+                              ${n.message}<br>
+                              <small class="text-muted">${n.created_at}</small>
+                            </span>
+                          </li>`;
+                    });
+                }
+            });
+    });
+</script>
+<?php endif; ?>

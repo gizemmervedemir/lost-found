@@ -3,3 +3,50 @@
 [2025-05-17 14:25:46] [::1] [Admin] LOGIN SUCCESS: admin@test.com
 [2025-05-17 14:28:35] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
 [2025-05-17 14:28:38] [::1] [Admin] ADMIN DELETE ITEM: Item #2 deleted
+[2025-05-17 16:37:43] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-17 16:39:24] [::1] [Gizem Merve Demir] MATCH REQUEST: User #2 sent match request for item #3
+[2025-05-17 16:39:50] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-17 16:40:03] [::1] [Admin] ADMIN approved MATCH: Match #4
+[2025-05-17 16:40:15] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-25 14:28:10] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-25 14:45:44] [::1] [Gizem Merve Demir] UNAUTHORIZED DELETE ATTEMPT: User #2 tried to delete item #3
+[2025-05-25 14:45:48] [::1] [Gizem Merve Demir] UNAUTHORIZED DELETE ATTEMPT: User #2 tried to delete item #3
+[2025-05-25 14:46:15] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-25 14:46:22] [::1] [Admin] ADMIN DELETE ITEM: Item #3 deleted
+[2025-05-25 14:50:22] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-25 14:50:41] [::1] [Gizem Merve Demir] USER DELETE ITEM: User #2 deleted item #4
+[2025-05-25 17:24:43] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 18:05:58] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 18:26:04] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 18:26:33] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 18:26:35] [::1] [Gizem Merve Demir] MATCH REQUEST: User #2 requested match for item #5
+[2025-05-26 18:26:38] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 18:26:42] [::1] [Admin] ADMIN DELETE ITEM: Item #5 deleted
+[2025-05-26 18:26:50] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 18:40:16] [::1] [Yunus Emre Açıkoğlu] LOGIN SUCCESS: yunusemre.acikoglu@std.yeditepe.edu.tr
+[2025-05-26 18:47:56] [::1] [Hatice Sena Ses] LOGIN SUCCESS: haticesena.ses@std.yeditepe.edu.tr
+[2025-05-26 18:51:11] [::1] [Aysun Ay] LOGIN SUCCESS: aysun.ay@std.yeditepe.edu.tr
+[2025-05-26 18:55:48] [::1] [Eylül Akboğa] LOGIN SUCCESS: eylul.akboga@std.yeditepe.edu.tr
+[2025-05-26 18:59:00] [::1] [Eylül Akboğa] MATCH REQUEST: User #12 requested match for item #6
+[2025-05-26 18:59:09] [::1] [Eylül Akboğa] MATCH DUPLICATE: User #12 tried to re-request item #6
+[2025-05-26 18:59:19] [::1] [Eylül Akboğa] MATCH DUPLICATE: User #12 tried to re-request item #6
+[2025-05-26 18:59:58] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 19:00:49] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 19:01:12] [::1] [Admin] ADMIN approved MATCH: Match #6
+[2025-05-26 19:01:39] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 19:06:08] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 19:26:02] [::1] [Admin] ADMIN DELETE ITEM: Item #6 deleted
+[2025-05-26 19:26:07] [::1] [Admin] MATCH REQUEST: User #8 requested match for item #9
+[2025-05-26 19:26:08] [::1] [Admin] MATCH REQUEST: User #8 requested match for item #7
+[2025-05-26 19:26:10] [::1] [Admin] MATCH REQUEST: User #8 requested match for item #8
+[2025-05-26 19:26:10] [::1] [Admin] MATCH REQUEST: User #8 requested match for item #11
+[2025-05-26 19:26:11] [::1] [Admin] MATCH REQUEST: User #8 requested match for item #10
+[2025-05-26 19:26:17] [::1] [Admin] ADMIN DELETE ITEM: Item #10 deleted
+[2025-05-26 19:26:20] [::1] [Admin] ADMIN DELETE ITEM: Item #8 deleted
+[2025-05-26 19:26:23] [::1] [Admin] ADMIN DELETE ITEM: Item #11 deleted
+[2025-05-26 19:26:25] [::1] [Admin] ADMIN DELETE ITEM: Item #7 deleted
+[2025-05-26 19:26:27] [::1] [Admin] ADMIN DELETE ITEM: Item #9 deleted
+[2025-05-26 20:10:30] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-26 20:39:23] [::1] [GUEST] NEW USER REGISTERED: eyupberkozer@gmail.com
+[2025-05-26 20:39:33] [::1] [Eyüp Berk Özer] LOGIN SUCCESS: eyupberkozer@gmail.com
+[2025-05-26 20:39:56] [::1] [Admin] LOGIN SUCCESS: admin@test.com
