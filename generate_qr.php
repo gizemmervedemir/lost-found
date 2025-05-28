@@ -1,32 +1,32 @@
 <?php
 
-// Hataları göster ama deprecated olanları gösterme
+// Show errors but hide deprecated warnings
 error_reporting(E_ALL & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 
-// Oturum başlat
+// Start session
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// QR kütüphanesini dahil et
+// Include QR library
 require_once 'qr/qrlib.php';
 
-// Kullanıcıdan item_id bekleniyor
+// Expect item_id from user
 if (!isset($_GET['item_id']) || !is_numeric($_GET['item_id'])) {
     die("⚠️ Error: Item ID is missing or invalid.");
 }
 
 $item_id = (int) $_GET['item_id'];
 
-// QR kod dosyasını kaydedeceğimiz yol
+// Path where QR code image will be saved
 $savePath = "uploads/qr_item_$item_id.png";
 
-// QR kodda gösterilecek URL
+// URL to be encoded in QR code
 $url = "http://localhost/lost-found/item_view.php?id=$item_id";
 
-// QR kodu oluştur
+// Generate QR code
 QRcode::png($url, $savePath, QR_ECLEVEL_L, 4);
 
-// HTML çıktısı
+// HTML output
 ?>
 <!DOCTYPE html>
 <html lang="en">

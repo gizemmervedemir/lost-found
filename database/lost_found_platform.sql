@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Anamakine: localhost
--- Üretim Zamanı: 28 May 2025, 06:27:20
--- Sunucu sürümü: 10.4.28-MariaDB
--- PHP Sürümü: 8.0.28
+-- Host: localhost
+-- Generation Time: 28 May 2025, 06:27:20
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Veritabanı: `lost_found_platform`
+-- Database: `lost_found_platform`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `items`
+-- Table structure for table `items`
 --
 
 CREATE TABLE `items` (
@@ -39,19 +39,19 @@ CREATE TABLE `items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Tablo döküm verisi `items`
+-- Dumping data for table `items`
 --
 
 INSERT INTO `items` (`id`, `user_id`, `title`, `description`, `location`, `date_lost`, `image_path`, `created_at`) VALUES
-(12, 14, 'Black Backpack', 'It&#039;s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Central Park', '2025-05-25', 'uploads/1748405450_indir.jpeg', '2025-05-28 04:10:50'),
-(13, 14, 'Black Backpack', 'It&#039;s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Central Park', '2025-05-25', 'uploads/1748405654_indir.jpeg', '2025-05-28 04:14:14'),
+(12, 14, 'Black Backpack', 'It''s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Central Park', '2025-05-25', 'uploads/1748405450_indir.jpeg', '2025-05-28 04:10:50'),
+(13, 14, 'Black Backpack', 'It''s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Central Park', '2025-05-25', 'uploads/1748405654_indir.jpeg', '2025-05-28 04:14:14'),
 (14, 14, 'jdfnj', 'dfjkdf', 'dfk', '7333-03-08', 'uploads/1748405768_airpods.jpg', '2025-05-28 04:16:08'),
-(15, 14, 'dsd', '. It&#039;s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Istanbul', '4333-03-31', 'uploads/1748406390_IMG_7176-scaled.jpg', '2025-05-28 04:26:30');
+(15, 14, 'dsd', '. It''s a Nike backpack, medium size, made of black nylon with silver zippers and three compartments. The backpack has a small Nike swoosh logo on the front and a slightly faded bottom corner from regular use. Inside were my university textbooks and a blue water bottle with stickers on it.', 'Istanbul', '4333-03-31', 'uploads/1748406390_IMG_7176-scaled.jpg', '2025-05-28 04:26:30');
 
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `matches`
+-- Table structure for table `matches`
 --
 
 CREATE TABLE `matches` (
@@ -67,7 +67,7 @@ CREATE TABLE `matches` (
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `messages`
+-- Table structure for table `messages`
 --
 
 CREATE TABLE `messages` (
@@ -81,7 +81,7 @@ CREATE TABLE `messages` (
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `notifications`
+-- Table structure for table `notifications`
 --
 
 CREATE TABLE `notifications` (
@@ -95,7 +95,7 @@ CREATE TABLE `notifications` (
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `reports`
+-- Table structure for table `reports`
 --
 
 CREATE TABLE `reports` (
@@ -111,7 +111,7 @@ CREATE TABLE `reports` (
 -- --------------------------------------------------------
 
 --
--- Tablo için tablo yapısı `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -126,7 +126,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Tablo döküm verisi `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `profile_image`, `gender`) VALUES
@@ -140,18 +140,18 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `p
 (14, 'Shannen Anthony', 'shannen_anthony@test.com', '$2y$10$K63jSbPbGPXGPiKJLzdhguaByQ4JFwETxdp3iqXY7OgUAkGmTY8BG', 'user', '2025-05-28 06:45:46', NULL, 'female');
 
 --
--- Dökümü yapılmış tablolar için indeksler
+-- Indexes for dumped tables
 --
 
 --
--- Tablo için indeksler `items`
+-- Indexes for table `items`
 --
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Tablo için indeksler `matches`
+-- Indexes for table `matches`
 --
 ALTER TABLE `matches`
   ADD PRIMARY KEY (`id`),
@@ -160,7 +160,7 @@ ALTER TABLE `matches`
   ADD KEY `fk_matches_user` (`requester_id`);
 
 --
--- Tablo için indeksler `messages`
+-- Indexes for table `messages`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`),
@@ -168,103 +168,5 @@ ALTER TABLE `messages`
   ADD KEY `sender_id` (`sender_id`);
 
 --
--- Tablo için indeksler `notifications`
+-- Indexes for table `notifications`
 --
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`);
-
---
--- Tablo için indeksler `reports`
---
-ALTER TABLE `reports`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `reporter_id` (`reporter_id`),
-  ADD KEY `reported_user_id` (`reported_user_id`),
-  ADD KEY `match_id` (`match_id`);
-
---
--- Tablo için indeksler `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
--- Dökümü yapılmış tablolar için AUTO_INCREMENT değeri
---
-
---
--- Tablo için AUTO_INCREMENT değeri `items`
---
-ALTER TABLE `items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- Tablo için AUTO_INCREMENT değeri `matches`
---
-ALTER TABLE `matches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- Tablo için AUTO_INCREMENT değeri `messages`
---
-ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Tablo için AUTO_INCREMENT değeri `notifications`
---
-ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Tablo için AUTO_INCREMENT değeri `reports`
---
-ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Tablo için AUTO_INCREMENT değeri `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- Dökümü yapılmış tablolar için kısıtlamalar
---
-
---
--- Tablo kısıtlamaları `items`
---
-ALTER TABLE `items`
-  ADD CONSTRAINT `items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-
---
--- Tablo kısıtlamaları `matches`
---
-ALTER TABLE `matches`
-  ADD CONSTRAINT `fk_matches_item` FOREIGN KEY (`lost_item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_matches_lostitem` FOREIGN KEY (`lost_item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_matches_user` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `matches_ibfk_1` FOREIGN KEY (`lost_item_id`) REFERENCES `items` (`id`),
-  ADD CONSTRAINT `matches_ibfk_2` FOREIGN KEY (`found_item_id`) REFERENCES `items` (`id`),
-  ADD CONSTRAINT `matches_ibfk_3` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`);
-
---
--- Tablo kısıtlamaları `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`match_id`) REFERENCES `matches` (`id`),
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`);
-
---
--- Tablo kısıtlamaları `reports`
---
-ALTER TABLE `reports`
-  ADD CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`reported_user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `reports_ibfk_3` FOREIGN KEY (`match_id`) REFERENCES `matches` (`id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

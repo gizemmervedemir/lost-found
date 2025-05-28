@@ -7,36 +7,36 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     die("Access denied.");
 }
 
-// Sadece POST isteklerine izin ver
+// Allow only POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id'])) {
     $item_id = (int) $_POST['item_id'];
 
-    // İlgili item'ın görselini al
+    // Get the image path of the related item
     $stmt = $conn->prepare("SELECT image_path FROM items WHERE id = ?");
     $stmt->bind_param("i", $item_id);
     $stmt->execute();
     $res = $stmt->get_result();
     $item = $res->fetch_assoc();
 
-    // 1. Eşleşmeleri sil
+    // 1. Delete matches
     $stmt1 = $conn->prepare("DELETE FROM matches WHERE lost_item_id = ?");
     $stmt1->bind_param("i", $item_id);
     $stmt1->execute();
 
-    // 2. Ürünü sil
+    // 2. Delete the item
     $stmt2 = $conn->prepare("DELETE FROM items WHERE id = ?");
     $stmt2->bind_param("i", $item_id);
     $stmt2->execute();
 
-    // 3. Görsel varsa sunucudan sil
+    // 3. If image exists, delete it from the server
     if (!empty($item['image_path']) && file_exists($item['image_path'])) {
         unlink($item['image_path']);
     }
 
-    // 4. Log kaydı
+    // 4. Log the action
     log_event("ITEM DELETED: Admin #{$_SESSION['user_id']} deleted item #$item_id");
 
-    // 5. Yönlendirme
+    // 5. Redirect
     header("Location: admin_panel.php?deleted=1");
     exit;
 } else {

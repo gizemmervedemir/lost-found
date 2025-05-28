@@ -11,12 +11,12 @@ $user_id = $_SESSION["user_id"];
 $success = "";
 $error = "";
 
-// 🧠 Güncelleme işlemi
+// 🧠 Update process
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $new_name = sanitize_input($_POST["name"]);
     $new_email = sanitize_input($_POST["email"]);
 
-    // E-posta başka biri tarafından kullanılıyor mu?
+    // Check if email is already used by someone else
     $check = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
     $check->bind_param("si", $new_email, $user_id);
     $check->execute();
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// 🔎 Mevcut kullanıcı verilerini çek
+// 🔎 Fetch current user data
 $stmt = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

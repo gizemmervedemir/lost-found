@@ -1,5 +1,5 @@
 <?php
-// Eğer form gönderildiyse ve "plain" inputu varsa
+// If the form is submitted and the "plain" input exists
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["plain"])) {
     $plain = trim($_POST["plain"]);
     $hash = password_hash($plain, PASSWORD_DEFAULT);

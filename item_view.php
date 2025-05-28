@@ -3,7 +3,7 @@ include 'includes/db.php';
 include 'includes/functions.php';
 include 'includes/header.php';
 
-// ✅ ID kontrolü
+// ✅ Check ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "<div class='alert alert-danger text-center mt-4'>❌ Invalid item ID.</div>";
     include 'includes/footer.php';
@@ -12,7 +12,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $id = (int) $_GET['id'];
 
-// ✅ İlan detaylarını al
+// ✅ Get item details
 $stmt = $conn->prepare("SELECT i.*, u.name AS owner_name FROM items i JOIN users u ON i.user_id = u.id WHERE i.id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -41,7 +41,7 @@ if (!$item) {
             <p><strong>Reported By:</strong> <?= htmlspecialchars($item['owner_name']) ?></p>
 
             <?php
-            // QR dosyası varsa göster
+            // Show QR file if exists
             $qr_path = "uploads/qr_item_" . $item['id'] . ".png";
             if (file_exists($qr_path)): ?>
                 <div class="text-center my-4">
