@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["match_id"], $_POST["a
     $action = $_POST["action"] === "approve" ? "approved" : "rejected";
     $user_id = $_SESSION["user_id"];
 
-    // Match'in sahibi olup olmadığını kontrol et
+    // Check if the user owns the match
     $stmt = $conn->prepare("
         SELECT m.id 
         FROM matches m

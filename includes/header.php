@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
         $user_avatar = $gender === 'female' ? 'assets/default_female.png' : 'assets/default_male.png';
     }
 
-    // Rolü ve kullanıcı adını session'a setle
+    // Set role and username in session
     $_SESSION['role'] = $user['role'] ?? 'user';
     $_SESSION['user_name'] = $user['name'] ?? 'User';
     $_SESSION['user_avatar'] = $user_avatar;

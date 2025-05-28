@@ -14,7 +14,7 @@ function log_event($message) {
     $logDir = __DIR__ . '/../logs';
     $logFile = $logDir . '/app.log';
 
-    // logs klasörü yoksa oluştur
+    // Create logs directory if it does not exist
     if (!is_dir($logDir)) {
         mkdir($logDir, 0777, true);
     }

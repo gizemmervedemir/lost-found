@@ -13,13 +13,13 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = (int) $_SESSION["user_id"];
 
-// Match ID kontrolü
+// Validate match ID
 if (!isset($_GET["match_id"]) || !is_numeric($_GET["match_id"])) {
-    die("❌ Match ID eksik veya geçersiz.");
+    die("❌ Match ID is missing or invalid.");
 }
 $match_id = (int) $_GET["match_id"];
 
-// Match ve kullanıcı kontrolü
+// Validate match and user access
 $stmt = $conn->prepare("
     SELECT m.*, i.user_id AS item_owner_id 
     FROM matches m
@@ -27,7 +27,7 @@ $stmt = $conn->prepare("
     WHERE m.id = ?
 ");
 if (!$stmt) {
-    die("❌ Sorgu hatası: " . $conn->error);
+    die("❌ Query error: " . $conn->error);
 }
 $stmt->bind_param("i", $match_id);
 $stmt->execute();
@@ -36,10 +36,10 @@ $match = $result->fetch_assoc();
 $stmt->close();
 
 if (!$match || ($match['requester_id'] != $user_id && $match['item_owner_id'] != $user_id)) {
-    die("⛔ Bu sohbete erişim izniniz yok.");
+    die("⛔ You do not have permission to access this chat.");
 }
 
-// Mesaj gönderme işlemi
+// Handle message sending
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
     $message = sanitize_input($_POST["message"]);
     if (!empty($message)) {
@@ -49,16 +49,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
             $insert->execute();
             $insert->close();
 
-            // Bildirim gönder
+            // Send notification
             $recipient_id = ($match['requester_id'] == $user_id) ? $match['item_owner_id'] : $match['requester_id'];
-            add_notification($recipient_id, "📩 Yeni mesajınız var!", "chat.php?match_id=$match_id");
+            add_notification($recipient_id, "📩 You have a new message!", "chat.php?match_id=$match_id");
         }
     }
-    header("Location: chat.php?match_id=$match_id");
+    header("Location: chat.php?match_id=$match_id"); // refresh page
     exit;
 }
 
-// Mesajları çek
+// Fetch chat messages
 $chat = $conn->prepare("
     SELECT m.message, m.created_at, u.name, u.id AS sender_id 
     FROM chat_messages m 
@@ -67,7 +67,7 @@ $chat = $conn->prepare("
     ORDER BY m.created_at ASC
 ");
 if (!$chat) {
-    die("❌ Mesajları çekerken hata: " . $conn->error);
+    die("❌ Error fetching messages: " . $conn->error);
 }
 $chat->bind_param("i", $match_id);
 $chat->execute();
@@ -106,7 +106,7 @@ include 'includes/header.php';
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p class="text-muted text-center">💬 Henüz mesaj yok. Konuşmayı başlat!</p>
+                <p class="text-muted text-center">💬 No messages yet. Start the conversation!</p>
             <?php endif; ?>
         </div>
     </div>

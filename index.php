@@ -24,7 +24,7 @@ $sql = "
 
 $result = $conn->query($sql);
 if (!$result) {
-    die("Veri çekme hatası: " . $conn->error);
+    die("Data retrieval error: " . $conn->error);
 }
 
 include 'includes/header.php';
@@ -79,9 +79,9 @@ include 'includes/header.php';
                 <div class="card-header bg-info text-white"><strong>Did You Know?</strong></div>
                 <div class="card-body small">
                     <ul class="list-unstyled mb-0">
-                        <li>🔍 2+ billion items lost yearly.</li>
-                        <li>📱 Most lost: phones, wallets, keys.</li>
-                        <li>⏱ Avg recovery: 3.5 days.</li>
+                        <li>🔍 Over 2 billion items are lost yearly.</li>
+                        <li>📱 Most commonly lost items: phones, wallets, keys.</li>
+                        <li>⏱ Average recovery time: 3.5 days.</li>
                     </ul>
                 </div>
             </div>
@@ -158,7 +158,7 @@ function sendMatchRequest(itemId) {
         setTimeout(() => { msg.innerHTML = ""; }, 4000);
     })
     .catch(() => {
-        msg.innerHTML = `<div class="alert alert-danger p-2">❌ Error occurred. Please try again.</div>`;
+        msg.innerHTML = `<div class="alert alert-danger p-2">❌ An error occurred. Please try again.</div>`;
         btn.disabled = false;
         btn.innerHTML = originalText;
     });

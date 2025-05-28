@@ -4,7 +4,7 @@ include 'includes/functions.php';
 
 header('Content-Type: application/json');
 
-// 🔐 Oturum kontrolü
+// 🔐 Session check
 if (!isset($_SESSION["user_id"])) {
     http_response_code(401);
     echo json_encode([
@@ -16,7 +16,7 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-// 🔎 Son 20 okunmamış bildirimi al
+// 🔎 Get last 20 unread notifications
 $sql = "
     SELECT id, message, created_at
     FROM notifications
@@ -40,14 +40,14 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-// ✅ Bildirimleri okundu olarak işaretle (sadece varsa)
+// ✅ Mark notifications as read (only if there are any)
 if (!empty($notifications)) {
     $markRead = $conn->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
     $markRead->bind_param("i", $user_id);
     $markRead->execute();
 }
 
-// ✅ JSON formatında dön
+// ✅ Return JSON response
 echo json_encode([
     "status" => "success",
     "count" => count($notifications),

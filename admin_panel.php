@@ -6,17 +6,17 @@ session_start();
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
 
-// ✅ Admin kontrolü
+// ✅ Admin check
 if (!isset($_SESSION["user_id"]) || ($_SESSION["role"] ?? '') !== 'admin') {
     log_event("ADMIN ACCESS DENIED: Unauthorized access attempt");
     die("Access denied.");
 }
 
-// 🗑 Eşya silme işlemi
+// 🗑 Item deletion process
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_item_id"])) {
     $item_id = (int) $_POST["delete_item_id"];
 
-    // Resim sil
+    // Delete image
     $stmt_img = $conn->prepare("SELECT image_path FROM items WHERE id = ?");
     if (!$stmt_img) {
         die("Prepare failed (image select): " . $conn->error);
@@ -33,13 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_item_id"])) {
         unlink($item["image_path"]);
     }
 
-    // QR kodu sil
+    // Delete QR code
     $qr_path = "uploads/qr_item_$item_id.png";
     if (file_exists($qr_path)) {
         unlink($qr_path);
     }
 
-    // Bu item ile ilişkili raporları (reports) sil
+    // Delete related reports linked to this item via matches
     $stmt_reports = $conn->prepare("
         DELETE r FROM reports r
         JOIN matches m ON r.match_id = m.id
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_item_id"])) {
     }
     $stmt_reports->close();
 
-    // Bu item ile ilişkili eşleşmeleri (matches) sil
+    // Delete matches related to this item
     $stmt_match = $conn->prepare("DELETE FROM matches WHERE lost_item_id = ? OR found_item_id = ?");
     if (!$stmt_match) {
         die("Prepare failed (matches delete): " . $conn->error);
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_item_id"])) {
     }
     $stmt_match->close();
 
-    // Item kaydını sil
+    // Delete the item itself
     $stmt_item = $conn->prepare("DELETE FROM items WHERE id = ?");
     if (!$stmt_item) {
         die("Prepare failed (item delete): " . $conn->error);
@@ -82,12 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_item_id"])) {
     exit;
 }
 
-// 📊 Genel istatistikler çek
+// 📊 Fetch overall stats
 $total_users   = $conn->query("SELECT COUNT(*) AS count FROM users")->fetch_assoc()['count'];
 $total_items   = $conn->query("SELECT COUNT(*) AS count FROM items")->fetch_assoc()['count'];
 $total_matches = $conn->query("SELECT COUNT(*) AS count FROM matches")->fetch_assoc()['count'];
 
-// 🆕 En son eklenen eşyaları çek
+// 🆕 Fetch latest added items
 $result = $conn->query("SELECT * FROM items ORDER BY id DESC LIMIT 10");
 
 include 'includes/header.php';
@@ -100,7 +100,7 @@ include 'includes/header.php';
         <div class="alert alert-success">✅ Item deleted successfully.</div>
     <?php endif; ?>
 
-    <!-- 📊 Genel İstatistikler -->
+    <!-- 📊 Overall Statistics -->
     <div class="row text-center mb-4">
         <div class="col-md-4 mb-3">
             <div class="card bg-primary text-white shadow-sm">
@@ -128,7 +128,7 @@ include 'includes/header.php';
         </div>
     </div>
 
-    <!-- 🆕 Son Eklenen Eşyalar -->
+    <!-- 🆕 Recently Added Items -->
     <h5 class="mb-3 mt-5">🗃 Recently Added Items</h5>
     <?php if ($result && $result->num_rows > 0): ?>
         <div class="row">

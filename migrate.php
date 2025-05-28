@@ -7,7 +7,7 @@ require_once 'includes/db.php';
 $sql = file_get_contents('migrate_notifications_column.sql');
 
 if ($conn->multi_query($sql)) {
-    echo "✅ Migration başarılı.";
+    echo "✅ Migration successful.";
 } else {
-    echo "❌ Hata: " . $conn->error;
+    echo "❌ Error: " . $conn->error;
 }

@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST['password'] ?? '';
 
     if (empty($email) || empty($password)) {
-        $error = "Lütfen e-posta ve şifre giriniz.";
+        $error = "Please enter both email and password.";
     } else {
         $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -21,13 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (password_verify($password, $user["password"])) {
                 $_SESSION["user_id"] = $user["id"];
                 $_SESSION["user_name"] = $user["name"];
-                header("Location: index.php"); // Ana sayfa
+                header("Location: index.php"); // Homepage
                 exit;
             } else {
-                $error = "❌ Şifre hatalı.";
+                $error = "❌ Incorrect password.";
             }
         } else {
-            $error = "❌ Kullanıcı bulunamadı.";
+            $error = "❌ User not found.";
         }
     }
 }
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="col-md-6 col-lg-5">
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-4">
-                <h3 class="text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Giriş Yap</h3>
+                <h3 class="text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Login</h3>
 
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= $error ?></div>
@@ -47,21 +47,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <form method="POST" novalidate>
                     <div class="mb-3">
-                        <label class="form-label">E-posta</label>
+                        <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Şifre</label>
+                        <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
 
                 <p class="mt-3 mb-0 text-center text-muted small">
-                    Henüz hesabınız yok mu?
-                    <a href="register.php" class="text-decoration-none">Kayıt Ol</a>
+                    Don't have an account yet?
+                    <a href="register.php" class="text-decoration-none">Register</a>
                 </p>
             </div>
         </div>

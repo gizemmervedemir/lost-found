@@ -77,3 +77,19 @@
 [2025-05-28 09:32:00] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
 [2025-05-28 09:33:10] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
 [2025-05-28 09:37:10] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
+[2025-05-28 09:40:44] [::1] [Aysun Ay] ITEM ADDED: User #2 added item #2
+[2025-05-28 09:41:26] [::1] [Admin] ADMIN DELETE ITEM: Item #2 deleted
+[2025-05-28 09:44:44] [::1] [Aysun Ay] ITEM ADDED: User #2 added item #3
+[2025-05-28 09:47:38] [::1] [Gizem Merve Demir] ITEM ADDED: User #1 added item #4
+[2025-05-28 09:48:10] [::1] [GUEST] NEW USER REGISTERED: yunusemre.acikoglu@std.yeditepe.edu.tr
+[2025-05-28 09:49:52] [::1] [Yunus Emre Açıkoğlu] ITEM ADDED: User #4 added item #5
+[2025-05-28 09:50:19] [::1] [GUEST] NEW USER REGISTERED: eylul.akboga@std.yeditepe.edu.tr
+[2025-05-28 09:51:37] [::1] [Eylül Akboğa] ITEM ADDED: User #5 added item #6
+[2025-05-28 09:52:31] [::1] [GUEST] NEW USER REGISTERED: haticesena.ses@std.yeditepe.edu.tr
+[2025-05-28 09:54:05] [::1] [Hatice Sena Ses] ITEM ADDED: User #6 added item #7
+[2025-05-28 10:04:00] [::1] [Gizem Merve Demir] User #1 uploaded a new avatar
+[2025-05-28 10:04:04] [::1] [Gizem Merve Demir] User #1 uploaded a new avatar
+[2025-05-28 10:04:52] [::1] [Gizem Merve Demir] MATCH REQUEST: User #1 requested match for Item #5
+[2025-05-28 10:07:23] [::1] [Aysun Ay] MATCH REQUEST: User #2 requested match for Item #6
+[2025-05-28 10:09:43] [::1] [Admin] ADMIN DELETE ITEM: Item #7 deleted
+[2025-05-28 10:16:17] [::1] [Gizem Merve Demir] MATCH REQUEST: User #1 requested match for Item #3

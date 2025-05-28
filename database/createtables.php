@@ -1,5 +1,5 @@
 <?php
-include '../includes/db.php'; // db bağlantısı
+include '../includes/db.php'; // db connection
 
 $queries = [
     "CREATE TABLE IF NOT EXISTS users (
@@ -68,24 +68,24 @@ $success = true;
 
 foreach ($queries as $query) {
     if (!$conn->query($query)) {
-        echo "<p style='color:red;'>❌ Hata: " . htmlspecialchars($conn->error) . "</p>";
+        echo "<p style='color:red;'>❌ Error: " . htmlspecialchars($conn->error) . "</p>";
         $success = false;
     } else {
-        echo "<p style='color:green;'>✅ Sorgu başarıyla çalıştı.</p>";
+        echo "<p style='color:green;'>✅ Query executed successfully.</p>";
     }
 }
 
-// ALTER TABLE: Eğer reports tablosunda 'reason' sütunu varsa kaldır
+// ALTER TABLE: Drop 'reason' column from reports table if it exists
 $res = $conn->query("SHOW COLUMNS FROM reports LIKE 'reason'");
 if ($res && $res->num_rows > 0) {
     if ($conn->query("ALTER TABLE reports DROP COLUMN reason")) {
-        echo "<p style='color:green;'>✅ 'reason' sütunu kaldırıldı.</p>";
+        echo "<p style='color:green;'>✅ 'reason' column dropped successfully.</p>";
     } else {
-        echo "<p style='color:red;'>❌ 'reason' sütunu kaldırılamadı: " . htmlspecialchars($conn->error) . "</p>";
+        echo "<p style='color:red;'>❌ Failed to drop 'reason' column: " . htmlspecialchars($conn->error) . "</p>";
         $success = false;
     }
 } else {
-    echo "<p style='color:gray;'>ℹ️ 'reason' sütunu zaten mevcut değil.</p>";
+    echo "<p style='color:gray;'>ℹ️ 'reason' column does not exist.</p>";
 }
 
 $conn->close();

@@ -6,7 +6,7 @@ session_start();
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
 
-// Giriş kontrolü
+// Login check
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int) $_SESSION['user_id'];
 
-// Match onay/red işlemi
+// Match approve/reject process
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['match_id'], $_POST['action'])) {
     $match_id = (int) $_POST['match_id'];
     $action = $_POST['action'];
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['match_id'], $_POST['a
     exit;
 }
 
-// Eşleşmeleri çek
+// Fetch matches
 $sql = "
 SELECT 
     m.id AS match_id,

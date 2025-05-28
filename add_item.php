@@ -1,11 +1,11 @@
 <?php
 ini_set('display_errors', 1);
-error_reporting(E_ALL & ~E_DEPRECATED); // Deprecated uyarılarını gizle
+error_reporting(E_ALL & ~E_DEPRECATED); // Hide deprecated warnings
 
 session_start();
 require_once 'includes/db.php';
 require_once 'includes/functions.php';
-require_once 'qr/qrlib.php'; // QR Code kütüphanesi
+require_once 'qr/qrlib.php'; // QR Code library
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date_lost   = $_POST["date_lost"];
     $image_path  = "";
 
-    // ✅ Görsel işlemleri
+    // ✅ Image processing
     $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
     if (!empty($_FILES["image"]["name"])) {
         $target_dir = "uploads/";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ✅ Veritabanına kayıt
+    // ✅ Save to database
     if (empty($error)) {
         $stmt = $conn->prepare("
             INSERT INTO items (user_id, title, description, location, date_lost, image_path)
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->affected_rows > 0) {
             $item_id = $stmt->insert_id;
 
-            // ✅ QR Kodu oluştur
+            // ✅ Generate QR Code
             $qr_path = "uploads/qr_item_" . $item_id . ".png";
             $qr_url = "http://localhost/lost-found/item_view.php?id=" . $item_id;
             QRcode::png($qr_url, $qr_path, QR_ECLEVEL_L, 4);

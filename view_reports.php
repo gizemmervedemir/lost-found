@@ -4,13 +4,13 @@ include 'includes/functions.php';
 
 session_start();
 
-// Sadece admin yetkisi kontrolü
+// Admin privilege check only
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
     log_event("UNAUTHORIZED REPORT VIEW ATTEMPT");
     die("Access denied.");
 }
 
-// Rapor silme işlemi
+// Report deletion process
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_report_id'])) {
     $report_id = (int) $_POST['delete_report_id'];
 
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_report_id'])) 
     }
 }
 
-// Raporları çek (message kaldırıldı)
+// Fetch reports (message removed)
 $sql = "
 SELECT r.*, 
        u.name AS reporter_name, 

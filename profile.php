@@ -1,5 +1,5 @@
 <?php
-// Session başlamamışsa başlat
+// Start session if not started yet
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 include 'includes/db.php';
 include 'includes/functions.php';
 
-// Kullanıcı giriş kontrolü
+// User login check
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
@@ -17,21 +17,25 @@ $user_id = (int) $_SESSION['user_id'];
 $success = '';
 $error = '';
 
-// Avatar kaldırma veya yükleme işlemleri
+// Avatar removal or upload process
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['remove_avatar'])) {
+        // Delete old avatar file
         $stmt = $conn->prepare('SELECT profile_image FROM users WHERE id = ?');
         $stmt->bind_param('i', $user_id);
         $stmt->execute();
         $current = $stmt->get_result()->fetch_assoc()['profile_image'] ?? '';
+        $stmt->close();
 
         if ($current && file_exists($current)) {
             unlink($current);
         }
 
+        // Set avatar path to NULL in database
         $stmt = $conn->prepare('UPDATE users SET profile_image = NULL WHERE id = ?');
         $stmt->bind_param('i', $user_id);
         $stmt->execute();
+        $stmt->close();
 
         log_event("User #{$user_id} removed their avatar");
         $success = '✅ Profile photo removed.';
@@ -45,37 +49,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = '❌ Only JPG, PNG or GIF files are allowed.';
         } else {
             $uploadDir = 'uploads/profiles/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
 
             $newName = "user_{$user_id}." . $ext;
             $target = $uploadDir . $newName;
 
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target)) {
+                // If there was a previous avatar, delete it (for security, even if it might be the same file)
+                $stmt_old = $conn->prepare('SELECT profile_image FROM users WHERE id = ?');
+                $stmt_old->bind_param('i', $user_id);
+                $stmt_old->execute();
+                $old_avatar = $stmt_old->get_result()->fetch_assoc()['profile_image'] ?? '';
+                $stmt_old->close();
+
+                if ($old_avatar && $old_avatar !== $target && file_exists($old_avatar)) {
+                    unlink($old_avatar);
+                }
+
+                // Save new avatar path in database
                 $stmt = $conn->prepare('UPDATE users SET profile_image = ? WHERE id = ?');
                 $stmt->bind_param('si', $target, $user_id);
                 $stmt->execute();
+                $stmt->close();
 
                 log_event("User #{$user_id} uploaded a new avatar");
                 $_SESSION['user_avatar'] = $target;
                 $success = '✅ Profile photo updated.';
             } else {
                 $error = '❌ Failed to upload the image.';
+                error_log('move_uploaded_file failed for user_id ' . $user_id);
             }
         }
     }
 }
 
-// Kullanıcı bilgilerini çek (email hariç)
+// Fetch user info (excluding email)
 $stmt = $conn->prepare('SELECT name, created_at, profile_image, gender FROM users WHERE id = ?');
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$user) {
     die("User not found.");
 }
 
-// Avatar belirle
+// Set avatar image path
 if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
     $avatar = $user['profile_image'];
 } else {
@@ -83,16 +104,16 @@ if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
     $avatar = ($gender === 'female') ? 'assets/default_female.png' : 'assets/default_male.png';
 }
 
-// Üyelik tarihi formatlama
+// Format membership date
 $created_at = $user['created_at'] ?? null;
 $member_since = ($created_at && $created_at !== '0000-00-00 00:00:00') 
     ? date('F j, Y', strtotime($created_at)) 
     : 'Not available';
 
-// İstatistikler
+// Statistics
 $total_items = $conn->query("SELECT COUNT(*) AS c FROM items WHERE user_id = {$user_id}")->fetch_assoc()['c'];
 
-// My Matches sayısı: kullanıcı hem requester hem de item sahibi olabilir
+// Count of matches: user can be requester or item owner
 $total_matches = $conn->query("
     SELECT COUNT(*) AS c 
     FROM matches m
@@ -117,7 +138,7 @@ include 'includes/header.php';
   <div class="card shadow-sm mb-4">
     <div class="card-body d-flex align-items-center">
       <div class="me-4 text-center">
-        <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar" class="rounded-circle" style="width:120px; height:120px; object-fit:cover; cursor:pointer;" id="profile-avatar">
+        <img src="<?= htmlspecialchars($avatar) ?>?t=<?= time() ?>" alt="Avatar" class="rounded-circle" style="width:120px; height:120px; object-fit:cover; cursor:pointer;" id="profile-avatar">
       </div>
       <div>
         <h5><?= htmlspecialchars($user['name']) ?></h5>

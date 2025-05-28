@@ -16,7 +16,7 @@ if (!$reported_user_id || !$match_id) {
 
 $report_message = "User reported without message";
 
-// Raporu raporlar tablosuna ekle (eğer varsa, yoksa bu kısmı kaldırabilirsin)
+// Insert report into reports table (remove this if you don't want to keep report records)
 $stmt = $conn->prepare("
     INSERT INTO reports (reporter_id, reported_user_id, match_id, message)
     VALUES (?, ?, ?, ?)
@@ -25,9 +25,9 @@ $stmt->bind_param("iiis", $reporter_id, $reported_user_id, $match_id, $report_me
 $stmt->execute();
 $stmt->close();
 
-// Admine notification ekle
-$admin_user_id = 1; // Admin kullanıcı ID’si
-$notif_msg = "User #$reported_user_id reported by user #$reporter_id in match #$match_id";
+// Add notification for admin
+$admin_user_id = 1; // Admin user ID
+$notif_msg = "User #$reported_user_id was reported by user #$reporter_id in match #$match_id";
 $target_url = "chat.php?match_id=$match_id";
 
 $stmt2 = $conn->prepare("INSERT INTO notifications (user_id, message, target_url) VALUES (?, ?, ?)");
@@ -35,7 +35,7 @@ $stmt2->bind_param("iss", $admin_user_id, $notif_msg, $target_url);
 $stmt2->execute();
 $stmt2->close();
 
-// Yönlendirme yapma, istersen JSON dön veya sadece exit yap
+// Do not redirect, optionally return JSON or just exit
 http_response_code(200);
 echo json_encode(['status' => 'success', 'message' => 'Report sent successfully.']);
 exit;

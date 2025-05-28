@@ -1,22 +1,22 @@
 <?php
-// Hataları göster
+// Display errors
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Veritabanı bağlantısını dahil et
+// Include database connection
 include __DIR__ . '/../includes/db.php';
 
-// Foreign key kontrollerini geçici olarak kapat
+// Temporarily disable foreign key checks
 $conn->query("SET FOREIGN_KEY_CHECKS = 0");
 
-// DROP TABLE işlemleri (sıralama önemli!)
+// DROP TABLE statements (order matters!)
 $sql = "
 DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS users;
 ";
 
-// Sorguyu çalıştır
+// Execute the query
 if ($conn->multi_query($sql)) {
     do {
         if ($result = $conn->store_result()) {
@@ -24,12 +24,12 @@ if ($conn->multi_query($sql)) {
         }
     } while ($conn->more_results() && $conn->next_result());
 
-    echo "<p style='color:green;'>✅ Tüm tablolar başarıyla silindi.</p>";
+    echo "<p style='color:green;'>✅ All tables have been successfully dropped.</p>";
 } else {
-    echo "<p style='color:red;'>❌ Hata: " . $conn->error . "</p>";
+    echo "<p style='color:red;'>❌ Error: " . $conn->error . "</p>";
 }
 
-// Foreign key kontrollerini tekrar aç
+// Re-enable foreign key checks
 $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
 $conn->close();
