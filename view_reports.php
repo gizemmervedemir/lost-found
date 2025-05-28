@@ -2,47 +2,59 @@
 include 'includes/db.php';
 include 'includes/functions.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+session_start();
+
+// Sadece admin yetkisi kontrolü
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
     log_event("UNAUTHORIZED REPORT VIEW ATTEMPT");
     die("Access denied.");
 }
 
-// Handle report deletion
+// Rapor silme işlemi
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_report_id'])) {
     $report_id = (int) $_POST['delete_report_id'];
 
     $stmt = $conn->prepare("DELETE FROM reports WHERE id = ?");
-    $stmt->bind_param("i", $report_id);
-    $stmt->execute();
+    if ($stmt) {
+        $stmt->bind_param("i", $report_id);
+        $stmt->execute();
+        $stmt->close();
 
-    log_event("ADMIN DELETED REPORT: ID #$report_id");
-
-    header("Location: view_reports.php?deleted=1");
-    exit;
+        log_event("ADMIN DELETED REPORT: ID #$report_id");
+        header("Location: view_reports.php?deleted=1");
+        exit;
+    } else {
+        die("Database error: " . $conn->error);
+    }
 }
 
-// Fetch reports
+// Raporları çek (message kaldırıldı)
 $sql = "
-SELECT r.*, u.name AS reporter_name, ru.name AS reported_name
+SELECT r.*, 
+       u.name AS reporter_name, 
+       ru.name AS reported_name
 FROM reports r
 JOIN users u ON r.reporter_id = u.id
-JOIN users ru ON r.reported_id = ru.id
+JOIN users ru ON r.reported_user_id = ru.id
 ORDER BY r.created_at DESC
 ";
 
 $result = $conn->query($sql);
+if (!$result) {
+    die("Database query error: " . $conn->error);
+}
 
 include 'includes/header.php';
 ?>
 
-<div class="container">
+<div class="container mt-4">
     <h3 class="mb-4"><i class="bi bi-exclamation-triangle"></i> User Reports</h3>
 
     <?php if (isset($_GET['deleted'])): ?>
         <div class="alert alert-success">✅ Report deleted successfully.</div>
     <?php endif; ?>
 
-    <?php if ($result && $result->num_rows > 0): ?>
+    <?php if ($result->num_rows > 0): ?>
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-dark">
@@ -50,8 +62,6 @@ include 'includes/header.php';
                         <th>#</th>
                         <th>Reporter</th>
                         <th>Reported User</th>
-                        <th>Reason</th>
-                        <th>Message</th>
                         <th>Date</th>
                         <th>Action</th>
                     </tr>
@@ -62,9 +72,7 @@ include 'includes/header.php';
                             <td><?= $report['id'] ?></td>
                             <td><?= htmlspecialchars($report['reporter_name']) ?></td>
                             <td><?= htmlspecialchars($report['reported_name']) ?></td>
-                            <td><?= htmlspecialchars($report['reason']) ?></td>
-                            <td><?= htmlspecialchars($report['message']) ?></td>
-                            <td><?= $report['created_at'] ?></td>
+                            <td><?= htmlspecialchars($report['created_at']) ?></td>
                             <td>
                                 <form method="POST" onsubmit="return confirm('Delete this report?');">
                                     <input type="hidden" name="delete_report_id" value="<?= $report['id'] ?>">

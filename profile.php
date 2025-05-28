@@ -1,22 +1,24 @@
 <?php
-// includes/db.php sets up $conn and starts the session
+// Session başlamamışsa başlat
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include 'includes/db.php';
-// includes/functions.php provides log_event() and other helpers
 include 'includes/functions.php';
 
-// Redirect guests to login
+// Kullanıcı giriş kontrolü
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = (int) $_SESSION['user_id'];
 $success = '';
-$error   = '';
+$error = '';
 
-// Handle avatar removal or upload
+// Avatar kaldırma veya yükleme işlemleri
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Remove existing avatar
     if (isset($_POST['remove_avatar'])) {
         $stmt = $conn->prepare('SELECT profile_image FROM users WHERE id = ?');
         $stmt->bind_param('i', $user_id);
@@ -32,22 +34,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         log_event("User #{$user_id} removed their avatar");
-        $success = 'Profile photo removed.';
+        $success = '✅ Profile photo removed.';
     }
 
-    // Upload new avatar
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['jpg','jpeg','png','gif'];
-        $ext     = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        $ext = strtolower(pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION));
 
         if (!in_array($ext, $allowed)) {
-            $error = 'Only JPG, PNG or GIF files are allowed.';
+            $error = '❌ Only JPG, PNG or GIF files are allowed.';
         } else {
             $uploadDir = 'uploads/profiles/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
-            $newName = "user_{$user_id}.{$ext}";
-            $target  = $uploadDir . $newName;
+            $newName = "user_{$user_id}." . $ext;
+            $target = $uploadDir . $newName;
 
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target)) {
                 $stmt = $conn->prepare('UPDATE users SET profile_image = ? WHERE id = ?');
@@ -56,34 +57,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 log_event("User #{$user_id} uploaded a new avatar");
                 $_SESSION['user_avatar'] = $target;
-                $success = 'Profile photo updated.';
+                $success = '✅ Profile photo updated.';
             } else {
-                $error = 'Failed to upload the image.';
+                $error = '❌ Failed to upload the image.';
             }
         }
     }
 }
 
-// Fetch user profile
-$stmt = $conn->prepare('
-    SELECT name, email, created_at, profile_image
-    FROM users
-    WHERE id = ?
-');
+// Kullanıcı bilgilerini çek (email hariç)
+$stmt = $conn->prepare('SELECT name, created_at, profile_image, gender FROM users WHERE id = ?');
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
 
-// Determine which avatar to display
+if (!$user) {
+    die("User not found.");
+}
+
+// Avatar belirle
 if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
     $avatar = $user['profile_image'];
 } else {
-    $avatar = 'assets/default_avatar.png';
+    $gender = $user['gender'] ?? 'male';
+    $avatar = ($gender === 'female') ? 'assets/default_female.png' : 'assets/default_male.png';
 }
 
-// Get user stats
-$total_items         = $conn->query("SELECT COUNT(*) AS c FROM items WHERE user_id = {$user_id}")->fetch_assoc()['c'];
-$total_matches       = $conn->query("SELECT COUNT(*) AS c FROM matches WHERE requester_id = {$user_id}")->fetch_assoc()['c'];
+// Üyelik tarihi formatlama
+$created_at = $user['created_at'] ?? null;
+$member_since = ($created_at && $created_at !== '0000-00-00 00:00:00') 
+    ? date('F j, Y', strtotime($created_at)) 
+    : 'Not available';
+
+// İstatistikler
+$total_items = $conn->query("SELECT COUNT(*) AS c FROM items WHERE user_id = {$user_id}")->fetch_assoc()['c'];
+
+// My Matches sayısı: kullanıcı hem requester hem de item sahibi olabilir
+$total_matches = $conn->query("
+    SELECT COUNT(*) AS c 
+    FROM matches m
+    JOIN items i ON m.lost_item_id = i.id
+    WHERE m.requester_id = {$user_id} OR i.user_id = {$user_id}
+")->fetch_assoc()['c'];
+
 $total_notifications = $conn->query("SELECT COUNT(*) AS c FROM notifications WHERE user_id = {$user_id}")->fetch_assoc()['c'];
 
 include 'includes/header.php';
@@ -101,18 +117,11 @@ include 'includes/header.php';
   <div class="card shadow-sm mb-4">
     <div class="card-body d-flex align-items-center">
       <div class="me-4 text-center">
-        <img
-          src="<?= htmlspecialchars($avatar) ?>"
-          alt="Avatar"
-          class="rounded-circle"
-          style="width:120px; height:120px; object-fit:cover; cursor:pointer;"
-          id="profile-avatar"
-        >
+        <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar" class="rounded-circle" style="width:120px; height:120px; object-fit:cover; cursor:pointer;" id="profile-avatar">
       </div>
       <div>
         <h5><?= htmlspecialchars($user['name']) ?></h5>
-        <p class="mb-1"><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-        <p class="mb-0"><strong>Member since:</strong> <?= date('F j, Y', strtotime($user['created_at'])) ?></p>
+        <p class="mb-0"><strong>Member since:</strong> <?= htmlspecialchars($member_since) ?></p>
       </div>
     </div>
     <div class="card-footer">
@@ -121,11 +130,7 @@ include 'includes/header.php';
         <button type="submit" class="btn btn-primary btn-sm">Upload New</button>
 
         <?php if (!empty($user['profile_image'])): ?>
-          <button type="submit" name="remove_avatar"
-                  class="btn btn-outline-danger btn-sm"
-                  onclick="return confirm('Remove your profile photo?');">
-            Remove
-          </button>
+          <button type="submit" name="remove_avatar" class="btn btn-outline-danger btn-sm" onclick="return confirm('Remove your profile photo?');">Remove</button>
         <?php endif; ?>
       </form>
     </div>
@@ -162,10 +167,7 @@ include 'includes/header.php';
 <?php include 'includes/footer.php'; ?>
 
 <script>
-// Show file selector when avatar is clicked
 document.getElementById('profile-avatar').addEventListener('click', () => {
-    const upload = document.getElementById('profile-upload');
-    upload.style.display = 'block';
-    upload.click();
+    document.getElementById('profile-upload').click();
 });
 </script>

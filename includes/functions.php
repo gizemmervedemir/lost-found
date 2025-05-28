@@ -11,10 +11,17 @@ if (session_status() === PHP_SESSION_NONE) {
  * @return void
  */
 function log_event($message) {
-    $logFile = __DIR__ . '/../logs/app.log';  // Ensure this directory exists and is writable
+    $logDir = __DIR__ . '/../logs';
+    $logFile = $logDir . '/app.log';
+
+    // logs klasörü yoksa oluştur
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0777, true);
+    }
+
     $timestamp = date("Y-m-d H:i:s");
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
-    $user = $_SESSION['user_name'] ?? 'GUEST';
+    $user = $_SESSION['user_name'] ?? ($_SESSION['user_id'] ?? 'GUEST');
 
     $entry = "[$timestamp] [$ip] [$user] $message\n";
     file_put_contents($logFile, $entry, FILE_APPEND);
@@ -29,9 +36,25 @@ function log_event($message) {
  */
 function add_notification($user_id, $message) {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+
+    if (!$conn || !$conn->ping()) {
+        log_event("add_notification error: No valid DB connection.");
+        return;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO notifications (user_id, message, is_read, created_at) VALUES (?, ?, 0, NOW())");
+
+    if ($stmt === false) {
+        log_event("add_notification prepare failed: " . $conn->error);
+        return;
+    }
+
     $stmt->bind_param("is", $user_id, $message);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        log_event("add_notification execute failed: " . $stmt->error);
+    }
+
+    $stmt->close();
 }
 
 /**

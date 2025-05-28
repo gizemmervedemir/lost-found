@@ -9,26 +9,34 @@ if (!isset($_SESSION['user_id'])) {
 $reporter_id = $_SESSION['user_id'];
 $reported_user_id = isset($_POST['reported_user_id']) ? (int)$_POST['reported_user_id'] : null;
 $match_id = isset($_POST['match_id']) ? (int)$_POST['match_id'] : null;
-$message = trim($_POST['message'] ?? '');
 
-if (empty($message)) {
-    die("Report message is required.");
+if (!$reported_user_id || !$match_id) {
+    die("Invalid report data.");
 }
 
-// Optional: Validate that match or user exists
-if (!$reported_user_id && !$match_id) {
-    die("Invalid report. Please select a target.");
-}
+$report_message = "User reported without message";
 
+// Raporu raporlar tablosuna ekle (eğer varsa, yoksa bu kısmı kaldırabilirsin)
 $stmt = $conn->prepare("
     INSERT INTO reports (reporter_id, reported_user_id, match_id, message)
     VALUES (?, ?, ?, ?)
 ");
-$stmt->bind_param("iiis", $reporter_id, $reported_user_id, $match_id, $message);
+$stmt->bind_param("iiis", $reporter_id, $reported_user_id, $match_id, $report_message);
 $stmt->execute();
+$stmt->close();
 
-log_event("REPORT SUBMITTED: User #$reporter_id reported User #$reported_user_id or Match #$match_id");
+// Admine notification ekle
+$admin_user_id = 1; // Admin kullanıcı ID’si
+$notif_msg = "User #$reported_user_id reported by user #$reporter_id in match #$match_id";
+$target_url = "chat.php?match_id=$match_id";
 
-header("Location: match_status.php?report=success");
+$stmt2 = $conn->prepare("INSERT INTO notifications (user_id, message, target_url) VALUES (?, ?, ?)");
+$stmt2->bind_param("iss", $admin_user_id, $notif_msg, $target_url);
+$stmt2->execute();
+$stmt2->close();
+
+// Yönlendirme yapma, istersen JSON dön veya sadece exit yap
+http_response_code(200);
+echo json_encode(['status' => 'success', 'message' => 'Report sent successfully.']);
 exit;
 ?>

@@ -50,3 +50,30 @@
 [2025-05-26 20:39:23] [::1] [GUEST] NEW USER REGISTERED: eyupberkozer@gmail.com
 [2025-05-26 20:39:33] [::1] [Eyüp Berk Özer] LOGIN SUCCESS: eyupberkozer@gmail.com
 [2025-05-26 20:39:56] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-26 20:43:26] [::1] [Gizem Merve Demir] LOGIN SUCCESS: gizemervedemir@gmail.com
+[2025-05-27 21:40:43] [::1] [Admin] LOGIN SUCCESS: admin@test.com
+[2025-05-28 05:45:46] [::1] [GUEST] NEW USER REGISTERED: shannen_anthony@test.com
+[2025-05-28 05:45:58] [::1] [GUEST] LOGIN FAILED: shannen_anthony@test.com
+[2025-05-28 05:46:07] [::1] [Shannen Anthony] LOGIN SUCCESS: shannen_anthony@test.com
+[2025-05-28 06:10:50] [::1] [Shannen Anthony] ITEM ADDED: User #14 added item #12
+[2025-05-28 06:14:14] [::1] [Shannen Anthony] ITEM ADDED: User #14 added item #13
+[2025-05-28 06:16:08] [::1] [Shannen Anthony] ITEM ADDED: User #14 added item #14
+[2025-05-28 06:26:30] [::1] [Shannen Anthony] ITEM ADDED: User #14 added item #15
+[2025-05-28 06:40:28] [::1] [Aysun Ay] LOGIN SUCCESS: aysun.ay@std.yeditepe.edu.tr
+[2025-05-28 06:40:30] [::1] [Aysun Ay] MATCH REQUEST: User #11 requested a match for item #15
+[2025-05-28 06:40:37] [::1] [Shannen Anthony] LOGIN SUCCESS: shannen_anthony@test.com
+[2025-05-28 06:44:18] [::1] [Eylül Akboğa] LOGIN SUCCESS: eylul.akboga@std.yeditepe.edu.tr
+[2025-05-28 06:44:27] [::1] [Shannen Anthony] LOGIN SUCCESS: shannen_anthony@test.com
+[2025-05-28 07:08:04] [::1] [Aysun Ay] LOGIN SUCCESS: aysun.ay@std.yeditepe.edu.tr
+[2025-05-28 07:08:13] [::1] [Shannen Anthony] LOGIN SUCCESS: shannen_anthony@test.com
+[2025-05-28 07:17:03] [::1] [Aysun Ay] LOGIN SUCCESS: aysun.ay@std.yeditepe.edu.tr
+[2025-05-28 07:19:36] [::1] [Shannen Anthony] LOGIN SUCCESS: shannen_anthony@test.com
+[2025-05-28 07:20:28] [::1] [Aysun Ay] LOGIN SUCCESS: aysun.ay@std.yeditepe.edu.tr
+[2025-05-28 08:07:41] [::1] [GUEST] NEW USER REGISTERED: gizemervedemir@gmail.com
+[2025-05-28 08:30:17] [::1] [Gizem Merve Demir] ITEM ADDED: User #1 added item #1
+[2025-05-28 08:30:47] [::1] [GUEST] NEW USER REGISTERED: aysun.ay@std.yeditepe.edu.tr
+[2025-05-28 08:45:52] [::1] [Aysun Ay] MATCH REQUEST: User #2 requested match for Item #1
+[2025-05-28 09:31:57] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
+[2025-05-28 09:32:00] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
+[2025-05-28 09:33:10] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
+[2025-05-28 09:37:10] [::1] [Admin] ADMIN DELETE ITEM: Item #1 deleted
