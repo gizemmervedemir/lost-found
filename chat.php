@@ -13,22 +13,19 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = (int) $_SESSION["user_id"];
 
-// Validate match ID
+// ✅ Validate match_id
 if (!isset($_GET["match_id"]) || !is_numeric($_GET["match_id"])) {
     die("❌ Match ID is missing or invalid.");
 }
 $match_id = (int) $_GET["match_id"];
 
-// Validate match and user access
+// ✅ Verify match belongs to current user
 $stmt = $conn->prepare("
     SELECT m.*, i.user_id AS item_owner_id 
     FROM matches m
     JOIN items i ON m.lost_item_id = i.id
     WHERE m.id = ?
 ");
-if (!$stmt) {
-    die("❌ Query error: " . $conn->error);
-}
 $stmt->bind_param("i", $match_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -39,26 +36,26 @@ if (!$match || ($match['requester_id'] != $user_id && $match['item_owner_id'] !=
     die("⛔ You do not have permission to access this chat.");
 }
 
-// Handle message sending
+// ✅ Handle new message POST
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["message"])) {
     $message = sanitize_input($_POST["message"]);
+
     if (!empty($message)) {
         $insert = $conn->prepare("INSERT INTO chat_messages (match_id, sender_id, message) VALUES (?, ?, ?)");
-        if ($insert) {
-            $insert->bind_param("iis", $match_id, $user_id, $message);
-            $insert->execute();
-            $insert->close();
+        $insert->bind_param("iis", $match_id, $user_id, $message);
+        $insert->execute();
+        $insert->close();
 
-            // Send notification
-            $recipient_id = ($match['requester_id'] == $user_id) ? $match['item_owner_id'] : $match['requester_id'];
-            add_notification($recipient_id, "📩 You have a new message!", "chat.php?match_id=$match_id");
-        }
+        // ✅ Notify recipient
+        $recipient_id = ($match['requester_id'] == $user_id) ? $match['item_owner_id'] : $match['requester_id'];
+        add_notification($recipient_id, "📩 You have a new message in your match chat.", "chat.php?match_id=$match_id");
     }
-    header("Location: chat.php?match_id=$match_id"); // refresh page
+
+    header("Location: chat.php?match_id=$match_id");
     exit;
 }
 
-// Fetch chat messages
+// ✅ Fetch chat messages
 $chat = $conn->prepare("
     SELECT m.message, m.created_at, u.name, u.id AS sender_id 
     FROM chat_messages m 
@@ -66,9 +63,6 @@ $chat = $conn->prepare("
     WHERE m.match_id = ? 
     ORDER BY m.created_at ASC
 ");
-if (!$chat) {
-    die("❌ Error fetching messages: " . $conn->error);
-}
 $chat->bind_param("i", $match_id);
 $chat->execute();
 $messages = $chat->get_result();
@@ -78,14 +72,16 @@ include 'includes/header.php';
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0"><i class="bi bi-chat-dots"></i> Chat – Match #<?= $match_id ?></h4>
+        <h4 class="mb-0"><i class="bi bi-chat-dots"></i> Chat – Match #<?= htmlspecialchars($match_id) ?></h4>
+
+        <!-- Report button -->
         <a href="report.php" 
            onclick="event.preventDefault(); 
                     if(confirm('Report this user?')) {
                         fetch('report.php', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: 'reported_user_id=<?= ($match['requester_id'] == $user_id) ? $match['item_owner_id'] : $match['requester_id'] ?>&match_id=<?= $match_id ?>'
+                            body: 'reported_user_id=<?= htmlspecialchars(($match['requester_id'] == $user_id) ? $match['item_owner_id'] : $match['requester_id']) ?>&match_id=<?= htmlspecialchars($match_id) ?>'
                         }).then(res => res.json()).then(data => alert(data.message));
                     }"
            class="btn btn-outline-danger btn-sm">
@@ -93,6 +89,7 @@ include 'includes/header.php';
         </a>
     </div>
 
+    <!-- Chat messages box -->
     <div class="card shadow-sm mb-3" style="max-height: 400px; overflow-y: auto;">
         <div class="card-body">
             <?php if ($messages->num_rows > 0): ?>
@@ -101,7 +98,7 @@ include 'includes/header.php';
                         <div>
                             <strong><?= htmlspecialchars($msg['name']) ?></strong><br>
                             <span><?= nl2br(htmlspecialchars($msg['message'])) ?></span><br>
-                            <small class="text-muted"><?= $msg['created_at'] ?></small>
+                            <small class="text-muted"><?= htmlspecialchars($msg['created_at']) ?></small>
                         </div>
                     </div>
                 <?php endwhile; ?>
@@ -111,6 +108,7 @@ include 'includes/header.php';
         </div>
     </div>
 
+    <!-- Message input -->
     <form method="POST" class="d-flex gap-2" autocomplete="off">
         <input type="text" name="message" class="form-control" placeholder="Type your message…" required autofocus>
         <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i></button>

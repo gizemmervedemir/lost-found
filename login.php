@@ -5,7 +5,15 @@ include 'includes/functions.php';
 
 $error = "";
 
+// IF FORM IS SUBMITTED
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // CSRF TOKEN VALIDATION
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+        log_event("Login CSRF token mismatch");
+        die("Security token invalid. Possible CSRF attack.");
+    }
+
+    // SANITIZE INPUT
     $email = sanitize_input($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -19,15 +27,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($result && $user = $result->fetch_assoc()) {
             if (password_verify($password, $user["password"])) {
+                session_regenerate_id(true); // SESSION FIXATION PREVENTION
                 $_SESSION["user_id"] = $user["id"];
                 $_SESSION["user_name"] = $user["name"];
-                header("Location: index.php"); // Homepage
+                log_event("Successful login for $email");
+                header("Location: index.php");
                 exit;
             } else {
                 $error = "❌ Incorrect password.";
+                log_event("Failed login (wrong password) for $email");
             }
         } else {
             $error = "❌ User not found.";
+            log_event("Failed login (user not found) for $email");
         }
     }
 }
@@ -42,10 +54,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <h3 class="text-center mb-4"><i class="bi bi-box-arrow-in-right"></i> Login</h3>
 
                 <?php if (!empty($error)): ?>
-                    <div class="alert alert-danger"><?= $error ?></div>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
                 <?php endif; ?>
 
                 <form method="POST" novalidate>
+                    <!-- CSRF TOKEN -->
+                    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
+
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" placeholder="you@example.com" required>

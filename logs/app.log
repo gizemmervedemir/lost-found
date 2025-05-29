@@ -93,3 +93,8 @@
 [2025-05-28 10:07:23] [::1] [Aysun Ay] MATCH REQUEST: User #2 requested match for Item #6
 [2025-05-28 10:09:43] [::1] [Admin] ADMIN DELETE ITEM: Item #7 deleted
 [2025-05-28 10:16:17] [::1] [Gizem Merve Demir] MATCH REQUEST: User #1 requested match for Item #3
+[2025-05-28 21:56:27] [::1] [Gizem Merve Demir] ADMIN ACCESS DENIED: Unauthorized access attempt
+[2025-05-29 06:23:48] [::1] [Admin] LOGOUT: User #3 (Admin) logged out
+[2025-05-29 06:28:12] [::1] [GUEST] NEW USER REGISTERED: aliyilmaz@test.com
+[2025-05-29 06:28:26] [::1] [GUEST] Failed login (wrong password) for aliyilmaz@test.com
+[2025-05-29 06:28:41] [::1] [Ali Yılmaz] Successful login for aliyilmaz@test.com

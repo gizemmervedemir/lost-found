@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /**
- * Logs system events to a log file
+ * Logs system events to a log file (with IP and user info)
  *
  * @param string $message - The message to log
  * @return void
@@ -68,7 +68,7 @@ function sanitize_input($data) {
 }
 
 /**
- * Generates and stores a CSRF token
+ * Generates and stores a CSRF token in session
  *
  * @return string - The CSRF token
  */
@@ -80,11 +80,40 @@ function generate_csrf_token() {
 }
 
 /**
- * Validates a submitted CSRF token
+ * Validates a submitted CSRF token against session
  *
  * @param string $token - The token to validate
- * @return bool
+ * @return bool - True if valid, false otherwise
  */
 function validate_csrf_token($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * Checks if the user is currently logged in
+ *
+ * @return bool
+ */
+function is_logged_in() {
+    return isset($_SESSION['user_id']);
+}
+
+/**
+ * Checks if the currently logged-in user is an admin
+ *
+ * @return bool
+ */
+function is_admin() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
+
+/**
+ * Validates an email using regex (extra check)
+ *
+ * @param string $email
+ * @return bool
+ */
+function validate_email($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) &&
+           preg_match('/^[^@]+@[^@]+\.[^@]+$/', $email);
 }

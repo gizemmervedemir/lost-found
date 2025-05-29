@@ -4,23 +4,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Database connection settings
-$host = 'localhost';
-$dbname = 'lost_found_platform';
+// Enable MySQLi strict error reporting (safer debugging during development)
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// Database connection settings (consider moving these to a .env file in production)
+$host     = 'localhost';
+$dbname   = 'lost_found_platform';
 $username = 'root';
 $password = '';
 
-// Create MySQL connection
-$conn = new mysqli($host, $username, $password, $dbname);
+// Create MySQL connection with error handling
+try {
+    $conn = new mysqli($host, $username, $password, $dbname);
 
-// Check connection error
-if ($conn->connect_error) {
-    error_log("Database connection failed: " . $conn->connect_error);
-    die("Database connection failed. Please try again later.");
+    // Set character set to support Turkish and emojis
+    if (!$conn->set_charset("utf8mb4")) {
+        throw new Exception("Failed to set character set: " . $conn->error);
+    }
+} catch (Exception $e) {
+    error_log("❌ DB Connection Error: " . $e->getMessage());
+    die("⚠️ We're experiencing technical issues. Please try again later.");
 }
-
-// Set character set (for Turkish characters support)
-if (!$conn->set_charset("utf8mb4")) {
-    error_log("Failed to set character set: " . $conn->error);
-}
-?>

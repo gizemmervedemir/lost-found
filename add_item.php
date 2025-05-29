@@ -1,6 +1,6 @@
 <?php
 ini_set('display_errors', 1);
-error_reporting(E_ALL & ~E_DEPRECATED); // Hide deprecated warnings
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 session_start();
 require_once 'includes/db.php';
@@ -17,15 +17,27 @@ $success = "";
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // ✅ CSRF protection
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+        log_event("CSRF token mismatch on item add (User #$user_id)");
+        die("Security token invalid. Possible CSRF attack.");
+    }
+
+    // ✅ Sanitize form inputs
     $title       = sanitize_input($_POST["title"]);
     $description = sanitize_input($_POST["description"]);
     $location    = sanitize_input($_POST["location"]);
     $date_lost   = $_POST["date_lost"];
     $image_path  = "";
 
-    // ✅ Image processing
+    // ✅ Validate required fields
+    if (!$title || !$description || !$location || !$date_lost) {
+        $error = "❌ Please fill in all required fields.";
+    }
+
+    // ✅ Image upload handling
     $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!empty($_FILES["image"]["name"])) {
+    if (empty($error) && !empty($_FILES["image"]["name"])) {
         $target_dir = "uploads/";
         if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
 
@@ -56,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // ✅ Generate QR Code
             $qr_path = "uploads/qr_item_" . $item_id . ".png";
-            $qr_url = "http://localhost/lost-found/item_view.php?id=" . $item_id;
+            $qr_url  = "http://localhost/lost-found/item_view.php?id=" . $item_id;
             QRcode::png($qr_url, $qr_path, QR_ECLEVEL_L, 4);
 
             log_event("ITEM ADDED: User #$user_id added item #$item_id");
@@ -80,12 +92,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h3 class="text-center mb-4"><i class="bi bi-plus-square"></i> Add Lost Item</h3>
 
                     <?php if ($success): ?>
-                        <div class="alert alert-success"><?= $success ?></div>
+                        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
                     <?php elseif ($error): ?>
-                        <div class="alert alert-danger"><?= $error ?></div>
+                        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                     <?php endif; ?>
 
                     <form method="POST" enctype="multipart/form-data" novalidate>
+                        <!-- ✅ CSRF Token -->
+                        <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
+
                         <div class="mb-3">
                             <label class="form-label">Item Title</label>
                             <input type="text" name="title" class="form-control" required>

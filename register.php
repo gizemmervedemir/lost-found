@@ -5,8 +5,14 @@ include 'includes/functions.php';
 $error   = "";
 $success = "";
 
-// Only handle POST submissions
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // ✅ CSRF token check
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+        log_event("CSRF token mismatch on registration");
+        die("Security token mismatch. Possible CSRF attack.");
+    }
+
     $name             = sanitize_input($_POST["name"] ?? "");
     $email_input      = trim($_POST["email"] ?? "");
     $email            = filter_var($email_input, FILTER_VALIDATE_EMAIL);
@@ -15,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $gender           = $_POST["gender"] ?? "male";
     $role             = "user";
 
+    // Validation checks
     if (!$name) {
         $error = "❌ Please enter your full name.";
     } elseif (!$email) {
@@ -26,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } elseif (!in_array($gender, ['male', 'female'])) {
         $error = "❌ Please select a valid gender.";
     } else {
+        // Check if email already exists
         $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
         $check->bind_param("s", $email);
         $check->execute();
@@ -34,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($check->num_rows > 0) {
             $error = "❌ That email is already registered.";
         } else {
+            // Register the new user
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare(
                 "INSERT INTO users (name, email, password, role, gender) VALUES (?, ?, ?, ?, ?)"
@@ -45,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 header("refresh:3;url=login.php");
             } else {
                 $error = "❌ Something went wrong. Please try again.";
+                log_event("REGISTER ERROR: DB failure for {$email}");
             }
         }
     }
@@ -68,6 +78,9 @@ include 'includes/header.php';
         <?php endif; ?>
 
         <form method="POST" novalidate>
+          <!-- ✅ CSRF Token -->
+          <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
+
           <div class="mb-3">
             <label class="form-label">Full Name</label>
             <input type="text"
