@@ -1,0 +1,58 @@
+# Lost & Found Platform
+
+A web-based system for managing lost item reports and match requests — built with PHP & MySQL.
+
+## 🔧 Features
+
+- User registration and login (reporter, finder, admin)
+- Add lost items with title, description, image, date, and location
+- Live AJAX search
+- Match requests between users
+- Admin match approval panel
+- QR code generation for each item
+- JSON API for external/mobile integration (optional)
+- Email notifications (optional)
+  
+## 📂 Folder Structure
+
+lost-found/
+├── api/                # JSON endpoints
+│   └── items.php
+├── includes/           # DB & helper files
+│   ├── db.php
+│   └── mail.php
+├── js/                 # JavaScript for live search
+│   └── search.js
+├── qr/                 # QR code generator library
+│   └── qrlib.php + others
+├── uploads/            # Item images + generated QR codes
+├── add_item.php        # Lost item form
+├── admin_panel.php     # Admin match approval panel
+├── generate_qr.php     # Generates QR codes per item
+├── index.php           # Home page after login
+├── item_view.php       # Public item view (QR scan result)
+├── login.php           # Login page
+├── logout.php          # Logout
+├── match.php           # Send match requests
+├── match_status.php    # View your match request statuses
+├── register.php        # User registration
+└── README.md           # This file
+
+
+## ✅ Requirements
+
+- PHP 7.4+ (tested on PHP 8.1)
+- MySQL (XAMPP / MAMP / LAMP)
+- Web browser
+
+## ⚙️ Setup
+
+1. Clone or copy to `/htdocs/lost-found/`
+2. Import `users`, `items`, `matches` tables into MySQL
+3. Set database name in `includes/db.php`
+4. Visit `http://localhost/lost-found/`
+
+## 🧪 Admin Login
+
+- Email: `admin@test.com`
+- Password: `123456`
